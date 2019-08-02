@@ -1,11 +1,23 @@
 #!/usr/bin/env python
 import serial
+import rospy
+from std_msgs.msg import String
 
 serial_port = serial.Serial("/dev/ttyUSB0", baudrate = 9600)
-while True:
-	string = str(serial_port.readline())
-	print(string)
+def AHRS():
+	talker_estandar = rospy.Publisher('AHRS', String, queue_size = 20)
+	rospy.init_node('AHRS', anonymous = True)
+	rate = rospy.Rate(10)
+	while not rospy.is_shutdown():
+		string = str(serial_port.readline())
+		talker_estandar.publish(string)
+		print string
 
-port.close()
+if __name__ == '__main__':
+	try:
+		AHRS()
+	except rospy.ROSInterruptException:
+		pass
+
 
 #To check which port is used type in the terminal: python -m serial.tools.list_ports
